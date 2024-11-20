@@ -15,6 +15,6 @@ class CompSplitWrapper:
         return self.df
 
 
-model_1 = CompSplitWrapper(data=pd.DataFrame({'compounds':['Donaudampfschifffahrtskapitänsmützenabzeichen','Abiturnote','Ablauforganisation','Einsatzfähigkeit','Heimspiel']}))
+model_1 = CompSplitWrapper(data=pd.DataFrame({'compounds':['Donaudampfschifffahrtskapitänsmützenabzeichen','Datensatz','Ablauforganisation','Einsatzfähigkeit','Heimspiel']}))
 print(model_1.run())
 

@@ -2,7 +2,7 @@ import os
 import subprocess
 import pandas as pd
 
-#testframe = pd.DataFrame({'compounds':['Donaudampfschifffahrtskapitänsmützenabzeichen','Abiturnote','Ablauforganisation','Einsatzfähigkeit','Heimspiel']})
+# testframe = pd.DataFrame({'compounds':['Donaudampfschifffahrtskapitänsmützenabzeichen','Abiturnote','Ablauforganisation','Einsatzfähigkeit','Heimspiel']})
 
 def smor(df):
     prevdir = os.getcwd()
@@ -36,4 +36,5 @@ def smor(df):
     df.insert(len(df.columns), 'components', subwords)
     return df
 
-#print(smor(testframe))
+testframe = pd.DataFrame({'compounds':['Donaudampfschifffahrtskapitänsmützenabzeichen','Abiturnote','Ablauforganisation','Einsatzfähigkeit','Heimspiel']})
+print(smor(testframe))
