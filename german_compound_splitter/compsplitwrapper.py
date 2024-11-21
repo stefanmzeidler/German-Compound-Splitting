@@ -5,7 +5,7 @@ import pandas as pd
 class CompSplitWrapper:
     def __init__(self, *,data:pd.DataFrame):
         self.df = data
-        self.input_file = 'Dictionaries/german.dic.txt'
+        self.input_file = '../Dictionaries/german.dic.txt'
 
 
     def run(self):
