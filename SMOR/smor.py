@@ -19,7 +19,6 @@ class smor_wrapper:
     def smor(df):
         prevdir = os.getcwd()
         os.chdir(smor_wrapper.get_dir())
-        # os.chdir(os.path.abspath('SMOR/'))
         e = subprocess.Popen(('echo', df['compounds'].str.cat(sep='\n')), stdout=subprocess.PIPE)
         output = subprocess.check_output(os.path.abspath('smor-infl'), stdin=e.stdout).decode('utf-8')
         os.chdir(prevdir)
