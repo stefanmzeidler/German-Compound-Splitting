@@ -25,7 +25,7 @@ class Evaluator:
         if df is None or models is None:
             raise ValueError('Data or models cannot be none')
         if splits is None:
-            splits = min(len(df),10)
+            splits = min(len(df), 10)
         self.sample_data = pd.DataFrame(shuffle(df, random_state=42))
         self.sample_data.reset_index(inplace=True, drop=True)
         self.indices = np.linspace(start=0, stop=len(self.sample_data) - 1, num=splits, dtype=int)
@@ -33,7 +33,7 @@ class Evaluator:
         self.metrics = pd.DataFrame()
         self.incorrect_words = defaultdict(list)
 
-    def evaluate(self, iterations = 10):
+    def evaluate(self, iterations=10):
         """
         Evaluates the models given to the instance for average time over each split for <iterations>.
         Also gives the accuracy, precision, recall, and F1 scores, as well as the individual values for
@@ -53,7 +53,7 @@ class Evaluator:
                     start = time.process_time_ns()
                     results = model.run()
                     stop = time.process_time_ns()
-                    elapsed_time += stop-start
+                    elapsed_time += stop - start
                 average_time = (elapsed_time / iterations) / Evaluator.nanoseconds_to_milliseconds
                 metrics_dict[f'Time for {str(index + 1)} words'].append(average_time)
             scores = self.__score(results)
@@ -80,13 +80,14 @@ class Evaluator:
         false_positives = score_dict['false_positives'][0]
         true_negatives = score_dict['true_negatives'][0]
         false_negatives = score_dict['false_negatives'][0]
-        accuracy = (true_positives + true_negatives)/ (true_positives+true_negatives+false_positives+false_negatives)
+        accuracy = (true_positives + true_negatives) / (
+                    true_positives + true_negatives + false_positives + false_negatives)
         score_dict['accuracy'].append(accuracy)
         precision = true_positives / (true_positives + false_positives)
         score_dict['precision'].append(precision)
         recall = true_positives / (true_positives + false_negatives)
         score_dict['recall'].append(recall)
-        f1 = ((precision * recall)/(precision+recall)) * 2
+        f1 = ((precision * recall) / (precision + recall)) * 2
         score_dict['F1'].append(f1)
         return score_dict
 
@@ -139,50 +140,55 @@ class Evaluator:
                           incorrect_components])
 
 
-testframe = pd.DataFrame({'compounds': ['Datensatz', 'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr'],
-                          'targets': [['Datum', 'Satz'], ['Ablauf', 'Organisation'], ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                                      ['Einsatz', 'Fähigkeit'],
-                                      ['Schule', 'Jahr']]})
+def main():
+    testframe = pd.DataFrame(
+        {'compounds': ['Datensatz', 'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr'],
+         'targets': [['Datum', 'Satz'], ['Ablauf', 'Organisation'], ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+                     ['Einsatz', 'Fähigkeit'],
+                     ['Schule', 'Jahr']]})
 
-testframe2 = pd.DataFrame(
-    {'compounds': ['Datensatz', 'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz'],
-     'targets': [['Datum', 'Satz'], ['Ablauf', 'Organisat', 'ion', 'extra'], ['Ein', 'satz', 'Fähigke'],
-                 ['Schule', 'Jahr'],
-                 ['Datensatz']]})
-comp_split = CompSplitWrapper()
-smor = smor_wrapper()
-# myEvaluator = Evaluator(testframe, [comp_split])
-myEvaluator = Evaluator(testframe, [comp_split, smor])
-myEvaluator.evaluate()
+    testframe2 = pd.DataFrame(
+        {'compounds': ['Datensatz', 'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz'],
+         'targets': [['Datum', 'Satz'], ['Ablauf', 'Organisat', 'ion', 'extra'], ['Ein', 'satz', 'Fähigke'],
+                     ['Schule', 'Jahr'],
+                     ['Datensatz']]})
+    comp_split = CompSplitWrapper()
+    smor = smor_wrapper()
+    # myEvaluator = Evaluator(testframe, [comp_split])
+    myEvaluator = Evaluator(testframe, [comp_split, smor])
+    myEvaluator.evaluate()
+
+
+main()
