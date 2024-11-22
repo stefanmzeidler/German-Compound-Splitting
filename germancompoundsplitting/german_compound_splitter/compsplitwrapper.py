@@ -31,7 +31,7 @@ class CompSplitWrapper:
         try:
             result = comp_split.dissect(word, self.ahocs, only_nouns=False, make_singular=True)
         except IndexError:
-            self.exception_list.append(word)
+            # self.exception_list.append(word)
             result = [CompSplitWrapper.EXCEPTION]
         return result
 

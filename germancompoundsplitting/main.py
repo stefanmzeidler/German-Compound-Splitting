@@ -14,7 +14,7 @@ def main():
         print("Processed data found. Loading data...")
         sample_data = pd.read_pickle(sample_data_path)
     sample_data['targets'] = sample_data['targets'].apply(lambda x: [x] if type(x) == str else x)
-    sample_data = sample_data.sample(n=200, random_state=42,ignore_index = True)
+    sample_data = sample_data.sample(n=250, random_state=42,ignore_index = True)
     print(sample_data.head())
     print(sample_data.shape)
     comp_splitter = CompSplitWrapper()

@@ -164,8 +164,8 @@ def main():
     # print(testframe)
     comp_splitter = CompSplitWrapper()
     smor = smor_wrapper()
-    myEvaluator = Evaluator(testframe, [comp_splitter])
-    # # myEvaluator = Evaluator(testframe, [comp_split, smor])
+    # myEvaluator = Evaluator(testframe, [comp_splitter])
+    myEvaluator = Evaluator(testframe, [comp_split, smor])
     myEvaluator.evaluate()
     print(comp_splitter.get_exception_list())
 
