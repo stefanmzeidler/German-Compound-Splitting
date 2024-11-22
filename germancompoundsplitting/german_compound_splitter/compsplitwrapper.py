@@ -1,5 +1,6 @@
 from germancompoundsplitting.german_compound_splitter import comp_split
 import pandas as pd
+import os
 
 class CompSplitWrapper:
 
@@ -9,7 +10,8 @@ class CompSplitWrapper:
         :param data: Dataframe with compound words to split in a column labeled 'compounds'.
         """
         self.df = data
-        self.input_file = '../Dictionaries/german.dic.txt'
+        curdir = os.path.dirname(os.path.abspath(__file__))
+        self.input_file = os.path.join(curdir, "Dictionaries", "german.dic.txt")
         self.ahocs = comp_split.read_dictionary_from_file(self.input_file)
 
 

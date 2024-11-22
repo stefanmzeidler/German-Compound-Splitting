@@ -140,55 +140,55 @@ class Evaluator:
                           incorrect_components])
 
 
-def main():
-    testframe = pd.DataFrame(
-        {'compounds': ['Datensatz', 'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-                       'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr'],
-         'targets': [['Datum', 'Satz'], ['Ablauf', 'Organisation'], ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-                     ['Einsatz', 'Fähigkeit'],
-                     ['Schule', 'Jahr']]})
-
-    testframe2 = pd.DataFrame(
-        {'compounds': ['Datensatz', 'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz'],
-         'targets': [['Datum', 'Satz'], ['Ablauf', 'Organisat', 'ion', 'extra'], ['Ein', 'satz', 'Fähigke'],
-                     ['Schule', 'Jahr'],
-                     ['Datensatz']]})
-    comp_split = CompSplitWrapper()
-    smor = smor_wrapper()
-    # myEvaluator = Evaluator(testframe, [comp_split])
-    myEvaluator = Evaluator(testframe, [comp_split, smor])
-    myEvaluator.evaluate()
-
-
-main()
+# def main():
+#     testframe = pd.DataFrame(
+#         {'compounds': ['Datensatz', 'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
+#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr'],
+#          'targets': [['Datum', 'Satz'], ['Ablauf', 'Organisation'], ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
+#                      ['Einsatz', 'Fähigkeit'],
+#                      ['Schule', 'Jahr']]})
+#
+#     testframe2 = pd.DataFrame(
+#         {'compounds': ['Datensatz', 'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz'],
+#          'targets': [['Datum', 'Satz'], ['Ablauf', 'Organisat', 'ion', 'extra'], ['Ein', 'satz', 'Fähigke'],
+#                      ['Schule', 'Jahr'],
+#                      ['Datensatz']]})
+#     comp_split = CompSplitWrapper()
+#     smor = smor_wrapper()
+#     # myEvaluator = Evaluator(testframe, [comp_split])
+#     myEvaluator = Evaluator(testframe, [comp_split, smor])
+#     myEvaluator.evaluate()
+#
+#
+# main()
