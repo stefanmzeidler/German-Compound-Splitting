@@ -46,3 +46,4 @@ class CompSplitWrapper:
 
     def get_exception_list(self):
         return np.unique(self.exception_list)
+#

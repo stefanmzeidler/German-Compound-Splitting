@@ -62,7 +62,6 @@ class Evaluator:
             for metric, score in scores.items():
                 metrics_dict[metric].append(score)
         self.metrics = pd.DataFrame(metrics_dict)
-        print(self.metrics.to_string())
         return self.metrics
 
     def __score(self, results):
@@ -165,10 +164,10 @@ def main():
     comp_splitter = CompSplitWrapper()
     smor = smor_wrapper()
     # myEvaluator = Evaluator(testframe, [comp_splitter])
-    myEvaluator = Evaluator(testframe, [comp_split, smor])
+    myEvaluator = Evaluator(testframe, [comp_splitter, smor])
     myEvaluator.evaluate()
     print(comp_splitter.get_exception_list())
-
+#
 
 
 

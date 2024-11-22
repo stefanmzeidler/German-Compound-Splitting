@@ -23,7 +23,7 @@ def main():
     metrics = myEvaluator.evaluate()
     print(comp_splitter.get_exception_list())
     print(metrics.to_string())
-
+#
 
 def get_path_to_data(file_name: str) -> os.path:
     curdir = os.path.dirname(os.path.abspath(__file__))
