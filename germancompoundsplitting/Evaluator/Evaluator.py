@@ -1,3 +1,4 @@
+from germancompoundsplitting.german_compound_splitter.comp_split import read_dictionary_from_file
 from germancompoundsplitting.german_compound_splitter.compsplitwrapper import CompSplitWrapper
 from germancompoundsplitting.SMOR.smor import smor_wrapper
 from sklearn.utils import shuffle
@@ -6,6 +7,7 @@ import pandas as pd
 import numpy as np
 import time
 import gc
+import os
 
 
 class Evaluator:
@@ -28,7 +30,7 @@ class Evaluator:
             splits = min(len(df), 10)
         self.sample_data = pd.DataFrame(shuffle(df, random_state=42))
         self.sample_data.reset_index(inplace=True, drop=True)
-        self.indices = np.linspace(start=0, stop=len(self.sample_data) - 1, num=splits, dtype=int)
+        self.indices = np.linspace(start=1, stop=len(self.sample_data) - 1, num=splits, dtype=int)
         self.models = models
         self.metrics = pd.DataFrame()
         self.incorrect_words = defaultdict(list)
@@ -70,7 +72,7 @@ class Evaluator:
         :return: Returns a dictionary item with each of the measures, metrics, and scores.
         """
         labels = ['true_positives', 'false_positives', 'true_negatives', 'false_negatives', 'oversplit', 'undersplit',
-                  'incorrect_components']
+                  'incorrect_components', 'exceptions']
         results[labels] = results.apply(
             lambda row: self.__score_helper(row['components'], row['targets']), axis=1)
         score_dict = defaultdict(list)
@@ -109,7 +111,8 @@ class Evaluator:
         :param targets: Actual components
         :return: The scores for this compound word.
         """
-        true_positives = true_negatives = false_negatives = false_words = oversplit = undersplit = incorrect_components = 0
+        exception = False
+        true_positives = true_negatives = false_negatives = false_words = oversplit = undersplit = incorrect_components = exceptions = 0
         components = [word.lower() for word in components]
         targets = [word.lower() for word in targets]
         total_predictions = len(components)
@@ -119,76 +122,54 @@ class Evaluator:
         elif total_targets > total_predictions:
             undersplit = 1
         for component in components:
-            if component in targets:
+            if component == CompSplitWrapper.EXCEPTION:
+                exceptions += 1
+                exception = True
+                break
+            elif component in targets:
                 if total_targets == 1:
                     true_negatives += 1
                 else:
                     true_positives += 1
             else:
+                print(f"found: {component} Expected: {targets}")
                 false_words += 1
-        if undersplit > 0:
-            false_negatives = total_targets - total_predictions - true_positives
-            false_positives = false_words - false_negatives
-            assert (false_words == false_positives + false_negatives)
+        if exception:
+            # In order for stat calculations to not divide by zero.
+            false_positives = 1
+            false_negatives = 1
         else:
-            false_positives = false_words
-        if true_positives != total_targets and oversplit == 0 and undersplit == 0:
-            incorrect_components += 1
-            self.incorrect_words['components'].append(components)
-            self.incorrect_words['targets'].append(targets)
+            if undersplit > 0:
+                false_negatives = total_targets - total_predictions - true_positives
+                false_positives = false_words - false_negatives
+                assert (false_words == false_positives + false_negatives)
+            else:
+                false_positives = false_words
+            if true_positives != total_targets and oversplit == 0 and undersplit == 0:
+                incorrect_components += 1
+                self.incorrect_words['components'].append(components)
+                self.incorrect_words['targets'].append(targets)
         return pd.Series([true_positives, false_positives, true_negatives, false_negatives, oversplit, undersplit,
-                          incorrect_components])
+                          incorrect_components, exceptions])
 
 
-# def main():
-#     testframe = pd.DataFrame(
-#         {'compounds': ['Datensatz', 'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz',
-#                        'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr'],
-#          'targets': [['Datum', 'Satz'], ['Ablauf', 'Organisation'], ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr'], ['Datum', 'Satz'], ['Ablauf', 'Organisation'],
-#                      ['Einsatz', 'Fähigkeit'],
-#                      ['Schule', 'Jahr']]})
-#
-#     testframe2 = pd.DataFrame(
-#         {'compounds': ['Datensatz', 'Ablauforganisation', 'Einsatzfähigkeit', 'Schuljahr', 'Datensatz'],
-#          'targets': [['Datum', 'Satz'], ['Ablauf', 'Organisat', 'ion', 'extra'], ['Ein', 'satz', 'Fähigke'],
-#                      ['Schule', 'Jahr'],
-#                      ['Datensatz']]})
-#     comp_split = CompSplitWrapper()
-#     smor = smor_wrapper()
-#     # myEvaluator = Evaluator(testframe, [comp_split])
-#     myEvaluator = Evaluator(testframe, [comp_split, smor])
-#     myEvaluator.evaluate()
-#
-#
+def main():
+    testframe = pd.DataFrame(
+        {'compounds': ['Fernsehen'],
+         'targets': ['Fernsehen']})
+
+    testframe2 = pd.DataFrame(
+        {'compounds': ['Datensatz','Fernsehen'],
+         'targets': [['Datum', 'Satz'], ['Fernsehen']]})
+    # print(testframe)
+    comp_splitter = CompSplitWrapper()
+    smor = smor_wrapper()
+    myEvaluator = Evaluator(testframe, [comp_splitter])
+    # # myEvaluator = Evaluator(testframe, [comp_split, smor])
+    myEvaluator.evaluate()
+    print(comp_splitter.get_exception_list())
+
+
+
+
 # main()
