@@ -29,7 +29,7 @@ class Evaluator:
             splits = min(len(df), 10)
         self.sample_data = pd.DataFrame(shuffle(df, random_state=42))
         self.sample_data.reset_index(inplace=True, drop=True)
-        self.indices = np.linspace(start=0, stop=len(self.sample_data) - 1, num=splits, dtype=int)
+        self.split_indices = np.linspace(start=0, stop=len(self.sample_data) - 1, num=splits, dtype=int)
         self.models = models
         self.metrics = pd.DataFrame()
         self.incorrect_words = defaultdict(list)
@@ -48,7 +48,7 @@ class Evaluator:
         for model in self.models:
             metrics_dict['Model'].append(model.model_type())
             elapsed_time = 0
-            for index in self.indices:
+            for index in self.split_indices:
                 for i in range(iterations):
                     gc.collect()
                     model.df = self.sample_data.copy().head(index)
