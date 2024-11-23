@@ -1,26 +1,28 @@
 import os
+
 import pandas as pd
+
 from germancompoundsplitting.Evaluator.Evaluator import Evaluator
 from germancompoundsplitting.SMOR.smor import SMORWrapper
 from germancompoundsplitting.data_preprocessing.data_preprocessing import GermanCompoundProcessor
 from germancompoundsplitting.german_compound_splitter.compsplitwrapper import CompSplitWrapper
 from germancompoundsplitting.mop_compound_splitter.mcswrapper import MCSWrapper
 
+
 def main():
     sample_data_path = get_path_to_data('Sample_Data.pk1')
-    sample_data = get_sample_data(sample_data_path)
+    sample_data = get_sample_data(sample_data_path, num_samples=1000)
     comp_splitter = CompSplitWrapper()
     smor = SMORWrapper()
     mcs = MCSWrapper()
-    # sample_evaluator = Evaluator(sample_data, [comp_splitter, smor])
-    # sample_metrics = sample_evaluator.evaluate(iterations=1)
+    sample_evaluator = Evaluator(sample_data, [comp_splitter, smor, mcs])
+    sample_metrics = sample_evaluator.evaluate(iterations=1)
     gold_standard_data = GermanCompoundProcessor.process_gold_standard((get_path_to_data('Ghost-NN_freq_prod_amb.txt')))
-    gold_standard_data = gold_standard_data.sample(n = 30,random_state=42,ignore_index = True)
-    comp_splitter.set_mode(only_nouns = True)
-    gold_evaluator = Evaluator(gold_standard_data, [mcs])
+    comp_splitter.set_mode(only_nouns=True)
+    gold_evaluator = Evaluator(gold_standard_data, [comp_splitter, smor, mcs])
     gold_metrics = gold_evaluator.evaluate(iterations=1)
-    # print('Sample dataset:')
-    # print(sample_metrics.to_string())
+    print('Sample dataset:')
+    print(sample_metrics.to_string())
     print('GoldStandard dataset:')
     print(gold_metrics.to_string())
 
