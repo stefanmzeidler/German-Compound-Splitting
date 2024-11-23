@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import pandas as pd
 import time
 
@@ -138,6 +140,20 @@ class GermanCompoundProcessor:
 
         results_df = pd.DataFrame(all_results)
         return results_df
+
+    @staticmethod
+    def process_gold_standard(input_file):
+        """
+        Processes the GoldStandard dataset of compound nouns.
+        :param input_file: GoldStandard dataset File.
+        :return: DataFrame with each compound word in the "compounds" column and the components in the "targets" column.
+        """
+        df = pd.read_csv(input_file, delimiter='\t')
+        gold_standard_dict = defaultdict(list)
+        for index, row in df.iterrows():
+            gold_standard_dict['compounds'].append(row['Compound'])
+            gold_standard_dict['targets'].append([row['Modifier'], row['Head']])
+        return pd.DataFrame(gold_standard_dict)
 
 # pd.set_option('display.max_rows', None)
 # pd.reset_option('display.max_rows')
