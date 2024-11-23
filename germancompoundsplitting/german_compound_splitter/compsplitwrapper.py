@@ -2,9 +2,11 @@ import os
 import numpy as np
 import pandas as pd
 from germancompoundsplitting.german_compound_splitter import comp_split
+from typing_extensions import override
+from germancompoundsplitting.model import Model
 
 
-class CompSplitWrapper:
+class CompSplitWrapper(Model):
     EXCEPTION = 'exception'
 
     def __init__(self):
@@ -12,6 +14,8 @@ class CompSplitWrapper:
         Creates a wrapper object around comp_split.py. Used to make class usable for evaluator class.
         :param data: Dataframe with compound words to split in a column labeled 'compounds'.
         """
+        super().__init__()
+        self.name = 'Comp_Splitter'
         self.df = pd.DataFrame()
         curdir = os.path.dirname(os.path.abspath(__file__))
         self.input_file = os.path.join(curdir, "Dictionaries", "german.dic.txt")
@@ -20,6 +24,7 @@ class CompSplitWrapper:
         self.only_nouns = False
         self.make_singular = False
 
+    @override
     def run(self):
         """
         Runs the underlying model's splitting of compounds and places the created words in a
@@ -46,14 +51,6 @@ class CompSplitWrapper:
             # self.exception_list.append(word)
             result = [CompSplitWrapper.EXCEPTION]
         return result
-
-    @staticmethod
-    def model_type():
-        """
-        Method to return type of model. Used for easier dynamic identification.
-        :return: THe name of this model as a string.
-        """
-        return 'Compound_Splitter'
 
     def get_exception_list(self):
         return np.unique(self.exception_list)

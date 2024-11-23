@@ -1,12 +1,17 @@
 import os
 import subprocess
+from typing_extensions import override
+from germancompoundsplitting.model import Model
 import pandas as pd
 
 
-class smor_wrapper:
+class SMORWrapper(Model):
     def __init__(self, df=None):
+        super().__init__()
         self.df = df
+        self.name = "SMOR"
 
+    @override
     def run(self):
         return self.smor(self.df)
 
@@ -16,13 +21,9 @@ class smor_wrapper:
         return os.path.join(file_directory, 'SMOR/')
 
     @staticmethod
-    def model_type():
-        return 'SMOR'
-
-    @staticmethod
     def smor(df):
         prevdir = os.getcwd()
-        os.chdir(smor_wrapper.get_dir())
+        os.chdir(SMORWrapper.get_dir())
         e = subprocess.Popen(('echo', df['compounds'].str.cat(sep='\n')), stdout=subprocess.PIPE)
         output = subprocess.check_output(os.path.abspath('smor-infl'), stdin=e.stdout).decode('utf-8')
         os.chdir(prevdir)
