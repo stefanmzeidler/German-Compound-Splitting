@@ -1,13 +1,12 @@
-from germancompoundsplitting.german_compound_splitter.comp_split import read_dictionary_from_file
-from germancompoundsplitting.german_compound_splitter.compsplitwrapper import CompSplitWrapper
-from germancompoundsplitting.SMOR.smor import smor_wrapper
-from sklearn.utils import shuffle
-from collections import defaultdict
-import pandas as pd
-import numpy as np
-import time
 import gc
-import os
+import time
+from collections import defaultdict
+import numpy as np
+import pandas as pd
+import spacy
+from sklearn.utils import shuffle
+
+from germancompoundsplitting.german_compound_splitter.compsplitwrapper import CompSplitWrapper
 
 
 class Evaluator:
@@ -30,10 +29,11 @@ class Evaluator:
             splits = min(len(df), 10)
         self.sample_data = pd.DataFrame(shuffle(df, random_state=42))
         self.sample_data.reset_index(inplace=True, drop=True)
-        self.indices = np.linspace(start=1, stop=len(self.sample_data) - 1, num=splits, dtype=int)
+        self.indices = np.linspace(start=0, stop=len(self.sample_data) - 1, num=splits, dtype=int)
         self.models = models
         self.metrics = pd.DataFrame()
         self.incorrect_words = defaultdict(list)
+        self.nlp = spacy.load("de_core_news_md")
 
     def evaluate(self, iterations=10):
         """
@@ -72,8 +72,8 @@ class Evaluator:
         """
         labels = ['true_positives', 'false_positives', 'true_negatives', 'false_negatives', 'oversplit', 'undersplit',
                   'incorrect_components', 'exceptions']
-        results[labels] = results.apply(
-            lambda row: self.__score_helper(row['components'], row['targets']), axis=1)
+        self.__lemmatize(results)
+        results[labels] = results.apply(lambda row: self.__score_helper(row['components'], row['targets']), axis=1)
         score_dict = defaultdict(list)
         for label in labels:
             score_dict[label].append(results[label].sum())
@@ -82,7 +82,7 @@ class Evaluator:
         true_negatives = score_dict['true_negatives'][0]
         false_negatives = score_dict['false_negatives'][0]
         accuracy = (true_positives + true_negatives) / (
-                    true_positives + true_negatives + false_positives + false_negatives)
+                true_positives + true_negatives + false_positives + false_negatives)
         score_dict['accuracy'].append(accuracy)
         precision = true_positives / (true_positives + false_positives)
         score_dict['precision'].append(precision)
@@ -131,7 +131,7 @@ class Evaluator:
                 else:
                     true_positives += 1
             else:
-                print(f"found: {component} Expected: {targets}")
+                # print(f"found: {component} Expected: {targets}")
                 false_words += 1
         if exception:
             # In order for stat calculations to not divide by zero.
@@ -151,24 +151,23 @@ class Evaluator:
         return pd.Series([true_positives, false_positives, true_negatives, false_negatives, oversplit, undersplit,
                           incorrect_components, exceptions])
 
+    def __lemmatize(self, results):
+        """
+        Lemmatizes the text in targets and components column of a dataframe. Must have already been run through a model.
+        """
+        for column in ['targets', 'components']:
+            results[column] = results[column].apply(lambda x: self.lemmatize_helper(x))
 
-def main():
-    testframe = pd.DataFrame(
-        {'compounds': ['Fernsehen'],
-         'targets': ['Fernsehen']})
+    def lemmatize_helper(self, text):
+        """
+        Helper method to lemmatize text.
+        :param text: Text to lemmatize
+        :return: List containing lemmatized words.
+        """
 
-    testframe2 = pd.DataFrame(
-        {'compounds': ['Datensatz','Fernsehen'],
-         'targets': [['Datum', 'Satz'], ['Fernsehen']]})
-    # print(testframe)
-    comp_splitter = CompSplitWrapper()
-    smor = smor_wrapper()
-    # myEvaluator = Evaluator(testframe, [comp_splitter])
-    myEvaluator = Evaluator(testframe, [comp_splitter, smor])
-    myEvaluator.evaluate()
-    print(comp_splitter.get_exception_list())
-#
-
-
-
-# main()
+        lemma = []
+        for word in text:
+            doc = self.nlp(word)
+            for doc_word in doc:
+                lemma.append(doc_word.lemma_)
+        return lemma
