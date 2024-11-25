@@ -53,9 +53,9 @@ class Evaluator:
                     gc.collect()
                     model.set_data(self.sample_data.copy().head(index))
                     # start = time.process_time_ns()
-                    start = time.process_time_ns()
+                    start = time.time_ns()
                     results = model.run()
-                    stop = time.process_time_ns()
+                    stop = time.time_ns()
                     # stop = time.process_time_ns()
                     elapsed_time += stop - start
                 average_time = (elapsed_time / iterations) / Evaluator.nanoseconds_to_milliseconds
