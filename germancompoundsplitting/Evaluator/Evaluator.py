@@ -7,7 +7,7 @@ import spacy
 from sklearn.utils import shuffle
 
 from germancompoundsplitting.german_compound_splitter.compsplitwrapper import CompSplitWrapper
-
+from germancompoundsplitting.model import Model
 
 class Evaluator:
     nanoseconds_to_milliseconds = 1000000
@@ -46,25 +46,41 @@ class Evaluator:
         metrics_dict = defaultdict(list)
         results = pd.DataFrame()
         for model in self.models:
-            metrics_dict['Model'].append(model.model_type())
-            elapsed_time = 0
-            for index in self.split_indices:
-                for i in range(iterations):
-                    gc.collect()
-                    model.set_data(self.sample_data.copy().head(index))
-                    # start = time.process_time_ns()
-                    start = time.time_ns()
-                    results = model.run()
-                    stop = time.time_ns()
-                    # stop = time.process_time_ns()
-                    elapsed_time += stop - start
-                average_time = (elapsed_time / iterations) / Evaluator.nanoseconds_to_milliseconds
-                metrics_dict[f'Time for {str(index)} words'].append(average_time)
-            scores = self.__score(results)
-            for metric, score in scores.items():
-                metrics_dict[metric].append(score)
+            temp_dict = defaultdict(list)
+            try:
+                temp_dict['Model'].append(model.model_type())
+                for index in self.split_indices:
+                    average_time, results = self.__get_average_time(model,index, iterations)
+                    temp_dict[f'Time for {str(index)} words'].append(average_time)
+                print(f"Scoring {model.model_type()}")
+                scores = self.__score(results)
+                for metric, score_vals in scores.items():
+                    for score_val in score_vals:
+                        temp_dict[metric].append(score_val)
+            except Exception as e:
+                print(f"{model.model_type()} encountered an error at {time.ctime()}. Data not processed.")
+                print(type(e))
+                print(e)
+                continue
+            for key,values in temp_dict.items():
+                for value in values:
+                    metrics_dict[key].append(value)
         self.metrics = pd.DataFrame(metrics_dict)
         return self.metrics
+
+
+    def __get_average_time(self, model,index,iterations):
+        elapsed_time = 0
+        results = None
+        for i in range(iterations):
+            gc.collect()
+            model.set_data(self.sample_data.copy().head(index))
+            start = time.time_ns()
+            results = model.run()
+            stop = time.time_ns()
+            elapsed_time += stop - start
+        average_time = (elapsed_time / iterations) / Evaluator.nanoseconds_to_milliseconds
+        return average_time,results
 
     def __score(self, results):
         """
@@ -74,6 +90,7 @@ class Evaluator:
         """
         labels = ['true_positives', 'false_positives', 'true_negatives', 'false_negatives', 'oversplit', 'undersplit',
                   'incorrect_components', 'exceptions']
+        results.dropna()
         self.__lemmatize(results)
         results[labels] = results.apply(lambda row: self.__score_helper(row['components'], row['targets']), axis=1)
         score_dict = defaultdict(list)
@@ -166,10 +183,12 @@ class Evaluator:
         :param text: Text to lemmatize
         :return: List containing lemmatized words.
         """
-
+        if not isinstance(text, list):
+            return [Model.EXCEPTION]
         lemma = []
         for word in text:
             doc = self.nlp(word)
             for doc_word in doc:
                 lemma.append(doc_word.lemma_)
         return lemma
+

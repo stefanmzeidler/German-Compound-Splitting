@@ -32,6 +32,7 @@ class CompSplitWrapper(Model):
         :return: Returns the dataframe with components added.
         """
         # self.df['components'] = self.df['compounds'].apply(lambda x: comp_split.dissect(x, self.ahocs, make_singular=True))
+        print("Comp_split processing data")
         self.df['components'] = self.df['compounds'].apply(lambda x: self.safe_dissect(x))
         return self.df
 

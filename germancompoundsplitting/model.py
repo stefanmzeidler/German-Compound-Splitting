@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import pandas as pd
 
 class Model(ABC):
+    EXCEPTION = 'exception'
     def __init__(self):
         self.df = pd.DataFrame()
         self.name = "Model"
@@ -13,5 +14,9 @@ class Model(ABC):
         return self.name
 
     @abstractmethod
-    def run(self):
+    def run(self) -> pd.DataFrame:
+        """
+        Runs the model and processed the compounds.
+        :return: Returns a dataframe with processed compounds in the 'components' column.
+        """
         ...

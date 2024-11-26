@@ -15,11 +15,11 @@ def main():
     comp_splitter = CompSplitWrapper()
     smor = SMORWrapper()
     mcs = MCSWrapper()
-    sample_evaluator = Evaluator(sample_data, [comp_splitter, smor, mcs])
+    sample_evaluator = Evaluator(sample_data, [comp_splitter,smor,mcs])
     sample_metrics = sample_evaluator.evaluate(iterations=1)
     gold_standard_data = GermanCompoundProcessor.process_gold_standard((get_path_to_data('Ghost-NN_freq_prod_amb.txt')))
     comp_splitter.set_mode(only_nouns=True)
-    gold_evaluator = Evaluator(gold_standard_data, [comp_splitter, smor, mcs])
+    gold_evaluator = Evaluator(gold_standard_data, [comp_splitter,smor,mcs])
     gold_metrics = gold_evaluator.evaluate(iterations=1)
     print('Sample dataset:')
     print(sample_metrics.to_string())
@@ -52,13 +52,13 @@ def get_sample_data(file_path, num_samples=10):
         curdir = os.path.dirname(os.path.abspath(__file__))
         dataset = os.path.join(curdir, "Datasets", "gecodb_v01.tsv")
         full_dataset = processor.process_file(dataset)
-        sample_data = full_dataset.sample(n=1000000, random_state=42, ignore_index=True)
+        sample_data = full_dataset.sample(n=1000000, random_state=3, ignore_index=True)
         sample_data.to_pickle(file_path)
     else:
         print("Processed data found. Loading data...")
         sample_data = pd.read_pickle(file_path)
     sample_data['targets'] = sample_data['targets'].apply(lambda x: [x] if type(x) == str else x)
-    sample_data = sample_data.sample(n=num_samples, random_state=42, ignore_index=True)
+    sample_data = sample_data.sample(n=num_samples, random_state=3, ignore_index=True)
     return sample_data
 
 
