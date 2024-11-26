@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 import spacy
 from sklearn.utils import shuffle
-
-from germancompoundsplitting.german_compound_splitter.compsplitwrapper import CompSplitWrapper
 from germancompoundsplitting.model import Model
 
 class Evaluator:
@@ -140,7 +138,7 @@ class Evaluator:
         elif total_targets > total_predictions:
             undersplit = 1
         for component in components:
-            if component == CompSplitWrapper.EXCEPTION:
+            if component == Model.EXCEPTION:
                 exceptions += 1
                 exception = True
                 break

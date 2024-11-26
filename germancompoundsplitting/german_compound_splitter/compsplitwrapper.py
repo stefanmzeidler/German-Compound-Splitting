@@ -7,7 +7,6 @@ from germancompoundsplitting.model import Model
 
 
 class CompSplitWrapper(Model):
-    EXCEPTION = 'exception'
 
     def __init__(self):
         """
@@ -31,7 +30,6 @@ class CompSplitWrapper(Model):
         'components' column of the dataframe.
         :return: Returns the dataframe with components added.
         """
-        # self.df['components'] = self.df['compounds'].apply(lambda x: comp_split.dissect(x, self.ahocs, make_singular=True))
         print("Comp_split processing data")
         self.df['components'] = self.df['compounds'].apply(lambda x: self.safe_dissect(x))
         return self.df
@@ -49,9 +47,6 @@ class CompSplitWrapper(Model):
         try:
             result = comp_split.dissect(word, self.ahocs, only_nouns= self.only_nouns, make_singular= self.make_singular)
         except IndexError:
-            # self.exception_list.append(word)
-            result = [CompSplitWrapper.EXCEPTION]
+            result = [Model.EXCEPTION]
         return result
 
-    def get_exception_list(self):
-        return np.unique(self.exception_list)
