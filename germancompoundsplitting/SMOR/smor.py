@@ -24,8 +24,11 @@ class SMORWrapper(Model):
     def smor(df):
         prevdir = os.getcwd()
         os.chdir(SMORWrapper.get_dir())
-        e = subprocess.Popen(('echo', df['compounds'].str.cat(sep='\n')), stdout=subprocess.PIPE)
-        output = subprocess.check_output(os.path.abspath('smor-infl'), stdin=e.stdout).decode('utf-8')
+        df['compounds'].to_csv('compounds.txt', header=False, index=False)
+        #e = subprocess.Popen(('echo', 'compounds.txt'), stdout=subprocess.PIPE)
+        #e = subprocess.Popen(('echo', df['compounds'].str.cat(sep='\n')), stdout=subprocess.PIPE)
+        #output = subprocess.check_output(os.path.abspath('smor-infl'), stdin=e.stdout).decode('utf-8')
+        output = subprocess.check_output([os.path.abspath('smor-infl'), 'compounds.txt']).decode('utf-8')
         os.chdir(prevdir)
 
         subwords = []
