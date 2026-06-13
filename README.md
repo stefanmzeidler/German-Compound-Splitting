@@ -1,11 +1,11 @@
 **German Compound Noun Segmentation**
-
-Department of Computer Science, University of Wisconsin - Milwaukee
-Andrew Lin, Peter Li, and Stefan Zeidler
-CS 723: Natural Language Processing
-Dr. Susan McRoy
-December 20, 2024
-
+  
+Department of Computer Science, University of Wisconsin - Milwaukee  
+Andrew Lin, Peter Li, and Stefan Zeidler  
+CS 723: Natural Language Processing 
+Dr. Susan McRoy  
+December 20, 2024  
+  
 # Introduction
 
 This project compares different models for splitting German compounds into their component words. To begin, we will discuss the motivating problem for this comparison. Next, we will review related work on the topic. Then, we will describe the models we tested, how we evaluated them, and our conclusions. We will also describe limitations and other approaches that could be tested in the future.
