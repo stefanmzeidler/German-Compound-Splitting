@@ -1,6 +1,7 @@
 **German Compound Noun Segmentation**
   
-Department of Computer Science, University of Wisconsin - Milwaukee  
+Department of Computer Science  
+University of Wisconsin - Milwaukee  
 Andrew Lin, Peter Li, and Stefan Zeidler  
 CS 723: Natural Language Processing 
 Dr. Susan McRoy  
