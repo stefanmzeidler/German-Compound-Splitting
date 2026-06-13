@@ -3,7 +3,7 @@
 Department of Computer Science  
 University of Wisconsin - Milwaukee  
 Andrew Lin, Peter Li, and Stefan Zeidler  
-CS 723: Natural Language Processing 
+CS 723: Natural Language Processing  
 Dr. Susan McRoy  
 December 20, 2024  
   
